@@ -9,6 +9,8 @@ export default function Dashboard() {
   const router = useRouter();
 
   // Himoya: Login qilmagan bo'lsa, qaytarib yuborish
+
+  //hello world
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
