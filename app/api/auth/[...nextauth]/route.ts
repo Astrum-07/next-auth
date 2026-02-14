@@ -3,19 +3,18 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-// 1. NextAuth konfiguratsiyasi
 export const authOptions: NextAuthOptions = {
-  // Production (Vercel) uchun secret majburiy
+  // .env dan o'qiy olmasa, xato bermasligi uchun tekshiruv
   secret: process.env.NEXTAUTH_SECRET,
   
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
     }),
     GithubProvider({
-      clientId: process.env.GITHUB_ID as string,
-      clientSecret: process.env.GITHUB_SECRET as string,
+      clientId: process.env.GITHUB_ID ?? "",
+      clientSecret: process.env.GITHUB_SECRET ?? "",
     }),
     CredentialsProvider({
       name: "DummyJSON",
@@ -48,7 +47,6 @@ export const authOptions: NextAuthOptions = {
           }
           return null;
         } catch (error) {
-          console.error("Backend ulanish xatosi:", error);
           return null;
         }
       },
@@ -56,7 +54,6 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 kun
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -76,7 +73,7 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/login",
-    error: "/login", // Xato bo'lsa ham login sahifasida qolsin
+    error: "/login",
   },
 };
 
