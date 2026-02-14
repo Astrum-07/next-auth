@@ -3,8 +3,11 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-// 1. Konfiguratsiyani alohida obyektga olamiz (yaxshi praktika)
+// 1. NextAuth konfiguratsiyasi
 export const authOptions: NextAuthOptions = {
+  // Production (Vercel) uchun secret majburiy
+  secret: process.env.NEXTAUTH_SECRET,
+  
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -45,17 +48,16 @@ export const authOptions: NextAuthOptions = {
           }
           return null;
         } catch (error) {
-          console.error("Auth error:", error);
+          console.error("Backend ulanish xatosi:", error);
           return null;
         }
       },
     }),
   ],
-  // 2. JWT strategiyasini aniq ko'rsatamiz
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 kun
   },
-  // 3. Callbacklarni tartibga solamiz
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -72,12 +74,10 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  // 4. Sahifalar yo'li
   pages: {
     signIn: "/login",
+    error: "/login", // Xato bo'lsa ham login sahifasida qolsin
   },
-  // 5. MAXFIY KALIT (Vercel uchun o'ta muhim)
-  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
